@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -71,14 +73,27 @@ func commandMapb() error {
 }
 
 func commandTest() error {
-	resp, err := http.Get("https://pokeapi.co/api/v2/pokemon/ditto")
 
+	resp, err := http.Get("https://pokeapi.co/api/v2/pokemon/ditto")
 	if err != nil {
 		fmt.Println("Error making GET request: ", err)
 		return err
 	}
 
-	fmt.Println(resp)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body: ", err)
+		return err
+	}
+
+	response := make(map[string]interface{})
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		fmt.Println("Error unmarshalling response: ", err)
+		return err
+	}
+
+	fmt.Println(response)
 
 	return nil
 }
