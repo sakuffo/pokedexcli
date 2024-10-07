@@ -38,11 +38,6 @@ func getCommands() map[string]cliCommand {
 			description: "Exit the Pokedex",
 			callback:    commandExit,
 		},
-		"test": {
-			name:        "test",
-			description: "And API Call",
-			callback:    commandTest,
-		},
 	}
 }
 
@@ -69,32 +64,6 @@ func commandMap() error {
 }
 
 func commandMapb() error {
-	return nil
-}
-
-func commandTest() error {
-
-	resp, err := http.Get("https://pokeapi.co/api/v2/pokemon/ditto")
-	if err != nil {
-		fmt.Println("Error making GET request: ", err)
-		return err
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading response body: ", err)
-		return err
-	}
-
-	response := make(map[string]interface{})
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		fmt.Println("Error unmarshalling response: ", err)
-		return err
-	}
-
-	fmt.Println(response)
-
 	return nil
 }
 
