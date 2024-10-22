@@ -8,6 +8,18 @@ import (
 	"os"
 )
 
+type PaginationState struct {
+	CurrentURL string
+	NextURL    string
+	PrevURL    string
+}
+
+var pagination = PaginationState{
+	CurrentURL: "https://pokeapi.co/api/v2/location/",
+	NextURL:    "https://pokeapi.co/api/v2/location/",
+	PrevURL:    "",
+}
+
 type cliCommand struct {
 	name        string
 	description string
@@ -17,7 +29,7 @@ type cliCommand struct {
 type PokeAPIResponse struct {
 	Count    int    `json:"count"`
 	Next     string `json:"next"`
-	Previous any    `json:"previous"`
+	Previous string `json:"previous"`
 	Results  []struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
@@ -49,7 +61,14 @@ func getCommands() map[string]cliCommand {
 		"test": {
 			name:        "test",
 			description: "Test the Pokedex",
-			callback:    fetchMapData,
+			callback: func() error {
+				response, err := fetchMapData(pagination.CurrentURL)
+				if err != nil {
+					return err
+				}
+				fmt.Println(response)
+				return nil
+			},
 		},
 	}
 }
@@ -73,19 +92,61 @@ func commandExit() error {
 }
 
 func commandMap() error {
-	return nil
+	if pagination.NextURL == "" {
+		fmt.Println("No more pages available")
+		return nil
+	}
+	pagination.CurrentURL = pagination.NextURL
+	return displayLocations(pagination.CurrentURL)
 }
 
 func commandMapb() error {
+	if pagination.PrevURL == "" {
+		fmt.Println("No previous page available")
+		return nil
+	}
+	pagination.CurrentURL = pagination.PrevURL
+	return displayLocations(pagination.CurrentURL)
+}
+
+func displayLocations(url string) error {
+	if url == "" {
+		fmt.Println("No more pages available")
+		return nil
+	}
+
+	response, err := fetchMapData(url)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\nDisplaying locations from %s\n", url)
+	fmt.Println("Locations:")
+	for _, location := range response.Results {
+		fmt.Printf("- %s\n", location.Name)
+	}
+
+	fmt.Println()
+
+	pagination.NextURL = response.Next
+	pagination.PrevURL = response.Previous
+
 	return nil
 }
 
-func fetchMapData() (PokeAPIResponse, error) {
-	resp, err := http.Get("https://pokeapi.co/api/v2/location/")
+func fetchMapData(url string) (PokeAPIResponse, error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Error fetching map data: ", err)
 		return PokeAPIResponse{}, err
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Received non-OK HTTP status: %s\n", resp.Status)
+		return PokeAPIResponse{}, fmt.Errorf("HTTP request failed with status %s", resp.Status)
+	}
+
 	var mapData PokeAPIResponse
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
