@@ -1,3 +1,5 @@
 *.exe
 *.out
 locations.json
+pokedexcli
+pokedexcli-s

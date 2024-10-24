@@ -5,34 +5,79 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/sakuffo/pokedexcli/internal/pokeapi"
 )
 
-func startRepl() {
-	reader := bufio.NewReader(os.Stdin)
+// types
+
+type config struct {
+	pokeapiClient    pokeapi.Client
+	nextLocationsURL *string
+	prevLocationsURL *string
+}
+
+type cliCommand struct {
+	name        string
+	description string
+	callback    func(*config) error
+}
+
+// functions
+
+func cleanInput(text string) []string {
+	output := strings.ToLower(text)
+	words := strings.Fields(output)
+	return words
+}
+
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"map": {
+			name:        "map",
+			description: "Lists the next 20 locations",
+			callback:    commandMapf,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Lists the previous 20 locations",
+			callback:    commandMapb,
+		},
+	}
+}
+
+func startRepl(cfg *config) {
+	reader := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("pokedex > ")
+		fmt.Print("Pokedex > ")
+		reader.Scan()
 
-		userInput, err := reader.ReadString('\n')
-		userInput = strings.TrimSpace(userInput)
-
-		if err != nil {
-			fmt.Println("Error reading input: ", err)
+		words := cleanInput(reader.Text())
+		if len(words) == 0 {
 			continue
 		}
 
-		commands := getCommands()
+		commandName := words[0]
 
-		command, ok := commands[userInput]
-
-		if !ok {
-			fmt.Println("Invalid command. Type 'help' to see the list of commands.")
+		command, exists := getCommands()[commandName]
+		if exists {
+			err := command.callback(cfg)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println("Invalid command")
 			continue
 		}
-
-		err = command.callback()
-		if err != nil {
-			fmt.Println("Error executing command: ", err)
-		}
-
 	}
 }
