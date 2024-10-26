@@ -58,6 +58,7 @@ func (c *Cache) readLoop() {
 	for range ticker.C {
 		now := time.Now()
 		c.mu.Lock()
+		defer c.mu.Unlock()
 		for key, entry := range c.cache {
 			if now.Sub(entry.createdAt) > c.cleanupInterval {
 				delete(c.cache, key)

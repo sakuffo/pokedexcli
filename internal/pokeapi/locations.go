@@ -12,6 +12,18 @@ func (c *Client) ListLocations(pageURL *string) (PokeAPILocations, error) {
 		url = *pageURL
 	}
 
+	cacheKey := "location-key-" + url
+
+	if cachedResp, ok := c.cache.Get(cacheKey); ok {
+		locationsResp := PokeAPILocations{}
+		err := json.Unmarshal(cachedResp, &locationsResp)
+		if err != nil {
+			return PokeAPILocations{}, err
+		} else {
+			return locationsResp, nil
+		}
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return PokeAPILocations{}, err
@@ -31,6 +43,11 @@ func (c *Client) ListLocations(pageURL *string) (PokeAPILocations, error) {
 
 	locationsResp := PokeAPILocations{}
 	err = json.Unmarshal(dat, &locationsResp)
+	if err != nil {
+		return PokeAPILocations{}, err
+	}
+
+	err = c.cache.Add(cacheKey, dat)
 	if err != nil {
 		return PokeAPILocations{}, err
 	}
