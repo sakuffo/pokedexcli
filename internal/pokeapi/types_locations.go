@@ -10,7 +10,7 @@ type PokeAPILocations struct {
 	} `json:"results"`
 }
 
-type PokeAPIAreaPokemon struct {
+type PokeAPIArea struct {
 	PokemonEncounters []struct {
 		Pokemon struct {
 			Name string `json:"name"`
