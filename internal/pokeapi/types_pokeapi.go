@@ -18,3 +18,8 @@ type PokeAPIArea struct {
 		} `json:"pokemon"`
 	} `json:"pokemon_encounters"`
 }
+
+type PokeAPIPokemonSpecies struct {
+	Name        string `json:"name"`
+	CaptureRate int    `json:"capture_rate"`
+}
