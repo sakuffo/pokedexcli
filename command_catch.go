@@ -15,6 +15,7 @@ func commandCatch(cfg *config, args ...string) error {
 	pokemonName := args[0]
 	pokemonResp, err := cfg.pokeapiClient.FetchPokemon(pokemonName)
 	if err != nil {
+		fmt.Printf("Error fetching pokemon: %s\n", err)
 		return err
 	}
 
@@ -27,6 +28,7 @@ func commandCatch(cfg *config, args ...string) error {
 	}
 
 	fmt.Printf("%s was caught!\n", pokemonResp.Name)
+	fmt.Println("You may now inspect it using the inspect command")
 
 	cfg.caughtPokemon[pokemonResp.Name] = pokemonResp
 	return nil
