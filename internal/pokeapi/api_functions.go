@@ -146,6 +146,11 @@ func (c *Client) FetchPokemonSpecies(name string) (PokeAPIPokemonSpecies, error)
 		return PokeAPIPokemonSpecies{}, err
 	}
 
+	err = c.cache.Add(cacheKey, dat)
+	if err != nil {
+		return PokeAPIPokemonSpecies{}, err
+	}
+
 	return speciesResp, nil
 }
 
@@ -176,7 +181,6 @@ func (c *Client) FetchPokemon(name string) (PokeAPIPokemon, error) {
 	if err != nil {
 		return PokeAPIPokemon{}, err
 	}
-
 	defer resp.Body.Close()
 
 	dat, err := io.ReadAll(resp.Body)
@@ -186,6 +190,11 @@ func (c *Client) FetchPokemon(name string) (PokeAPIPokemon, error) {
 
 	pokemonResp := PokeAPIPokemon{}
 	err = json.Unmarshal(dat, &pokemonResp)
+	if err != nil {
+		return PokeAPIPokemon{}, err
+	}
+
+	err = c.cache.Add(cacheKey, dat)
 	if err != nil {
 		return PokeAPIPokemon{}, err
 	}

@@ -16,7 +16,7 @@ type config struct {
 	pokeapiClient    pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
-	pokedex          pokeapi.PokedexPokeInfo
+	caughtPokemon    map[string]pokeapi.PokeAPIPokemon
 }
 
 type cliCommand struct {
@@ -73,10 +73,12 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-func (c *config) AddToPokedex(name string, pokedex *pokeapi.PokedexPokeInfo) error {
+func (c *config) AddToPokedex(name string) error {
 	if name == "" {
 		return errors.New("name is required")
 	}
+
+	pokedex := c.caughtPokemon
 
 	pokemonResp, err := c.pokeapiClient.FetchPokemon(name)
 	if err != nil {
@@ -84,7 +86,7 @@ func (c *config) AddToPokedex(name string, pokedex *pokeapi.PokedexPokeInfo) err
 		return err
 	}
 
-	pokedex.Pokemon[pokemonResp.Name] = pokemonResp
+	pokedex[pokemonResp.Name] = pokemonResp
 
 	return nil
 }

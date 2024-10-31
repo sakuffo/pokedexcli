@@ -11,7 +11,7 @@ func commandInspect(cfg *config, args ...string) error {
 	}
 
 	if args[0] == "all" {
-		for _, pokemon := range cfg.pokedex.Pokemon {
+		for _, pokemon := range cfg.caughtPokemon {
 			fmt.Printf("%s\n", pokemon.Name)
 		}
 
@@ -20,7 +20,7 @@ func commandInspect(cfg *config, args ...string) error {
 
 	pokemonName := args[0]
 
-	pokemon, exists := cfg.pokedex.Pokemon[pokemonName]
+	pokemon, exists := cfg.caughtPokemon[pokemonName]
 	if !exists {
 		return errors.New("pokemon not found")
 	}

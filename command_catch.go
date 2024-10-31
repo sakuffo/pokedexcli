@@ -25,10 +25,10 @@ func commandCatch(cfg *config, args ...string) error {
 	randNum := rand.Intn(256)
 
 	if randNum > speciesResp.CaptureRate {
-		fmt.Printf("You failed to catch the pokemon\n")
+		fmt.Printf("%s escaped!\n", speciesResp.Name)
 	} else {
-		fmt.Printf("You caught the pokemon\n")
-		err := cfg.AddToPokedex(pokemonName, &cfg.pokedex)
+		fmt.Printf("%s was caught!\n", speciesResp.Name)
+		err := cfg.AddToPokedex(pokemonName)
 		if err != nil {
 			return err
 		}
