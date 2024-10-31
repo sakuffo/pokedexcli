@@ -148,3 +148,47 @@ func (c *Client) FetchPokemonSpecies(name string) (PokeAPIPokemonSpecies, error)
 
 	return speciesResp, nil
 }
+
+func (c *Client) FetchPokemon(name string) (PokeAPIPokemon, error) {
+	url := baseURL + "/pokemon/" + name
+	if name == "" {
+		return PokeAPIPokemon{}, errors.New("name is required")
+	}
+
+	cacheKey := "pokemon-key-" + url
+
+	if cachedResp, ok := c.cache.Get(cacheKey); ok {
+		pokemonResp := PokeAPIPokemon{}
+		err := json.Unmarshal(cachedResp, &pokemonResp)
+		if err != nil {
+			return PokeAPIPokemon{}, err
+		} else {
+			return pokemonResp, nil
+		}
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return PokeAPIPokemon{}, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return PokeAPIPokemon{}, err
+	}
+
+	defer resp.Body.Close()
+
+	dat, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return PokeAPIPokemon{}, err
+	}
+
+	pokemonResp := PokeAPIPokemon{}
+	err = json.Unmarshal(dat, &pokemonResp)
+	if err != nil {
+		return PokeAPIPokemon{}, err
+	}
+
+	return pokemonResp, nil
+}

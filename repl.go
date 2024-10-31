@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -15,6 +16,7 @@ type config struct {
 	pokeapiClient    pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
+	pokedex          pokeapi.PokedexPokeInfo
 }
 
 type cliCommand struct {
@@ -63,7 +65,28 @@ func getCommands() map[string]cliCommand {
 			description: "Attempts to catch a pokemon",
 			callback:    commandCatch,
 		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspects a pokemon in your pokedex",
+			callback:    commandInspect,
+		},
 	}
+}
+
+func (c *config) AddToPokedex(name string, pokedex *pokeapi.PokedexPokeInfo) error {
+	if name == "" {
+		return errors.New("name is required")
+	}
+
+	pokemonResp, err := c.pokeapiClient.FetchPokemon(name)
+	if err != nil {
+		fmt.Println("Error fetching pokemon:", err)
+		return err
+	}
+
+	pokedex.Pokemon[pokemonResp.Name] = pokemonResp
+
+	return nil
 }
 
 func startRepl(cfg *config) {
