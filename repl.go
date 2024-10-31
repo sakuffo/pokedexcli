@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -71,24 +70,6 @@ func getCommands() map[string]cliCommand {
 			callback:    commandInspect,
 		},
 	}
-}
-
-func (c *config) AddToPokedex(name string) error {
-	if name == "" {
-		return errors.New("name is required")
-	}
-
-	pokedex := c.caughtPokemon
-
-	pokemonResp, err := c.pokeapiClient.FetchPokemon(name)
-	if err != nil {
-		fmt.Println("Error fetching pokemon:", err)
-		return err
-	}
-
-	pokedex[pokemonResp.Name] = pokemonResp
-
-	return nil
 }
 
 func startRepl(cfg *config) {
