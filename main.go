@@ -1,22 +1,36 @@
 package main
 
 import (
+	"flag"
 	"time"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeapi"
-	"github.com/sakuffo/pokedexcli/internal/pokecache"
+	"github.com/sakuffo/pokedexcli/internal/logger"
 	"golang.org/x/exp/rand"
 )
 
 func main() {
+	// Define flags
+	logLevel := flag.String("log", "none", "Set log level (none, debug, info, error, fatal)")
+	flag.Parse()
+
+	var level logger.LogLevel
+	switch *logLevel {
+	case "debug":
+		level = logger.DEBUG
+	case "info":
+		level = logger.INFO
+	case "error":
+		level = logger.ERROR
+	case "fatal":
+		level = logger.FATAL
+	default:
+		level = logger.NONE
+	}
+
 	rand.Seed(uint64(time.Now().UnixNano()))
 
-	cache := pokecache.NewCache(5 * time.Minute)
-	pokeClient := pokeapi.NewClient(5*time.Second, cache)
-	cfg := &config{
-		pokeapiClient: pokeClient,
-		caughtPokemon: map[string]pokeapi.PokeAPIPokemon{},
-	}
+	// Initialize configuration with persistence
+	cfg := InitializeConfig(level)
 
 	startRepl(cfg)
 }

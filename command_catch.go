@@ -31,5 +31,11 @@ func commandCatch(cfg *config, args ...string) error {
 	fmt.Println("You may now inspect it using the inspect command")
 
 	cfg.caughtPokemon[pokemonResp.Name] = pokemonResp
+
+	err = saveData(cfg)
+	if err != nil {
+		fmt.Printf("Failed to save data: %v\n", err)
+	}
+
 	return nil
 }
