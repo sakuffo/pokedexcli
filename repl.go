@@ -97,13 +97,13 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 
 	logFile, err := os.OpenFile("pokedexcli.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatalf("Failed to open log file: %v", err)
+		logger.Fatal("Failed to open log file: %v", err)
 	}
 
 	logger := logger.New(logLevel)
 	logger.SetWriter(io.MultiWriter(os.Stdout, logFile))
 
-	cache := pokecache.NewCache(5 * time.Minute)
+	cache := pokecache.NewCache(5*time.Minute, logger)
 	pokeClient := pokeapi.NewClient(5*time.Second, cache)
 
 	persistence, err := pokedata.NewPersistence("pokedata.json")

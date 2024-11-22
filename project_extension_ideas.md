@@ -14,3 +14,43 @@ You don't have to extend this project, but if you're planning to make this somet
 - Use the PokeAPI to make exploration more interesting. For example, rather than typing the names of areas, maybe you are given choices of areas and just type "left" or "right"
 - Random encounters with wild pokemon
 - Adding support for different types of balls (Pokeballs, Great Balls, Ultra Balls, etc), which have different chances of catching pokemon
+
+
+### Logging
+
+Here's a comprehensive list of where logging would be valuable in your application, organized by component and log level:
+
+**Cache Operations (pokecache.go)**
+DEBUG: When items are added to cache
+DEBUG: When items are retrieved from cache
+INFO: When cache cleanup occurs
+DEBUG: When items are removed during cleanup
+
+**API Client (pokeapi.go)**
+DEBUG: API requests being made
+INFO: Rate limiting events
+ERROR: Failed API requests
+DEBUG: Cache hits vs API calls
+
+**Pokemon Operations (command_catch.go, command_inspect.go)**
+INFO: Pokemon catch attempts
+INFO: Successful catches
+DEBUG: Base experience and catch probability calculations
+ERROR: Failed Pokemon fetches
+
+**Location Operations (command_map.go, command_explore.go)**
+DEBUG: Location navigation
+INFO: Area exploration starts
+ERROR: Failed location/exploration fetches
+
+**Data Persistence (pokedata.go)**
+DEBUG: File operations (already implemented)
+INFO: Save operations (already implemented)
+ERROR: File operation failures (already implemented)
+DEBUG: Data loading attempts
+
+**REPL (repl.go)**
+DEBUG: Command parsing
+ERROR: Invalid commands
+INFO: Program start/stop
+DEBUG: Signal handling
