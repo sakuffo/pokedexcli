@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 func commandHelp(cfg *config, args ...string) error {
+	cfg.logger.Debug("Executing 'help' command")
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
@@ -13,5 +14,6 @@ func commandHelp(cfg *config, args ...string) error {
 	}
 
 	fmt.Println()
+	cfg.logger.Debug("Displayed help")
 	return nil
 }

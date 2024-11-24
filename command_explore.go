@@ -6,6 +6,7 @@ import (
 )
 
 func commandExplore(cfg *config, args ...string) error {
+	
 	if len(args) != 1 {
 		cfg.logger.Error("Area is required")
 		return errors.New("area is required")

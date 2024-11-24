@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/sakuffo/pokedexcli/internal/logger"
+	"github.com/sakuffo/pokedexcli/internal/party"
 	"github.com/sakuffo/pokedexcli/internal/pokeapi"
 	"github.com/sakuffo/pokedexcli/internal/pokecache"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
@@ -24,9 +25,10 @@ type config struct {
 	pokeapiClient    pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
-	caughtPokemon    map[string]pokeapi.PokeAPIPokemon
+	caughtPokemon    map[string]pokeapi.Pokemon
 	persistence      *pokedata.Persistence
 	logger           *logger.Logger
+	party            *party.Party
 }
 
 type cliCommand struct {
@@ -97,14 +99,14 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 
 	logFile, err := os.OpenFile("pokedexcli.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		logger.Fatal("Failed to open log file: %v", err)
+		log.Fatal("Failed to open log file: %v", err)
 	}
 
 	logger := logger.New(logLevel)
 	logger.SetWriter(io.MultiWriter(os.Stdout, logFile))
 
 	cache := pokecache.NewCache(5*time.Minute, logger)
-	pokeClient := pokeapi.NewClient(5*time.Second, cache)
+	pokeClient := pokeapi.NewClient(5*time.Second, cache, logger)
 
 	persistence, err := pokedata.NewPersistence("pokedata.json")
 	if err != nil {
@@ -115,6 +117,17 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 	data, err := persistence.Load()
 	if err != nil {
 		log.Fatalf("Failed to load data: %v", err)
+	}
+
+	// Create a new party
+	party := party.Party{}
+
+	// Populate party from loaded data
+	for _, pkmn := range data.PartyMembers {
+		err := party.AddMember(pkmn)
+		if err != nil {
+			logger.Info("Failed to add Pokémon to party: %v", err)
+		}
 	}
 
 	cfg := &config{
@@ -145,14 +158,18 @@ func saveData(cfg *config) error {
 }
 
 func startRepl(cfg *config) {
+	cfg.logger.Debug("Starting REPL")
+
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
 		<-sigChan
+		cfg.logger.Debug("Received interrupt signal, saving data and exiting...")
 		fmt.Println("\nReceived interrupt signal, saving data and exiting...")
 		err := saveData(cfg)
 		if err != nil {
+			cfg.logger.Error("Failed to save data: %v", err)
 			fmt.Printf("Failed to save data: %v\n", err)
 		}
 		os.Exit(0)
@@ -161,6 +178,7 @@ func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
+		cfg.logger.Debug("Waiting for input")
 		reader.Scan()
 
 		words := cleanInput(reader.Text())
@@ -174,13 +192,17 @@ func startRepl(cfg *config) {
 			args = words[1:]
 		}
 
+		cfg.logger.Debug("User entered command: %s with args: %v", commandName, args)
+
 		command, exists := getCommands()[commandName]
 		if exists {
 			err := command.callback(cfg, args...)
 			if err != nil {
+				cfg.logger.Error("Error executing command: '%s': %v", commandName, err)
 				fmt.Println(err)
 			}
 		} else {
+			cfg.logger.Error("Invalid command: '%s'", commandName)
 			fmt.Println("Invalid command")
 			continue
 		}

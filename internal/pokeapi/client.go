@@ -16,6 +16,7 @@ type Client struct {
 }
 
 func NewClient(timeout time.Duration, cache *pokecache.Cache, logger *logger.Logger) Client {
+	logger.Debug("Creating new PokeAPI client")
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,
