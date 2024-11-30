@@ -38,6 +38,14 @@ func commandCatch(cfg *config, args ...string) error {
 
 	cfg.caughtPokemon[pokemonResp.Name] = pokemonResp
 
+	err = cfg.party.AddMember(pokemonResp)
+	if err != nil {
+		cfg.logger.Error("Failed to add %s to party: %v", pokemonName, err)
+		fmt.Printf("Failed to add %s to party: %v\n", pokemonName, err)
+	} else {
+		fmt.Printf("%s was added to your party.\n", pokemonName)
+	}
+
 	err = saveData(cfg)
 	if err != nil {
 		cfg.logger.Error("Failed to save data after catching %s: %v", pokemonName, err)
