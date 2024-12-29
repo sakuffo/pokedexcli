@@ -8,14 +8,14 @@ import (
 	"sync"
 
 	"github.com/sakuffo/pokedexcli/internal/logger"
+	"github.com/sakuffo/pokedexcli/internal/party"
 	"github.com/sakuffo/pokedexcli/internal/pokeapi"
 )
 
 type Data struct {
 	CaughtPokemon map[string]pokeapi.Pokemon `json:"caught_pokemon"`
-	PartyMembers  []pokeapi.Pokemon          `json:"party_members"`
+	PartyMembers  []*party.PartyPokemon      `json:"party_members"`
 }
-
 type Persistence struct {
 	filePath string
 	mu       sync.Mutex
@@ -98,7 +98,7 @@ func (p *Persistence) Load() (*Data, error) {
 	}
 
 	if data.PartyMembers == nil {
-		data.PartyMembers = []pokeapi.Pokemon{}
+		data.PartyMembers = []*party.PartyPokemon{}
 	}
 
 	return &data, nil
