@@ -87,6 +87,11 @@ func getCommands() map[string]cliCommand {
 			description: "Lists all the pokemon you have caught",
 			callback:    commandPokedex,
 		},
+		"party": {
+			name:        "party",
+			description: "Lists all the pokemon in your party",
+			callback:    commandParty,
+		},
 	}
 }
 
@@ -97,6 +102,7 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 		fmt.Printf("Log level: %v\n", logLevel)
 	}
 
+	// Open a log file
 	logFile, err := os.OpenFile("pokedexcli.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal("Failed to open log file: %v", err)
@@ -120,14 +126,13 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 	}
 
 	// Create a new party
-	party := party.Party{}
+	party := &party.Party{
+		Members: make([]*party.PartyPokemon, 0),
+	}
 
 	// Populate party from loaded data
-	for _, pkmn := range data.PartyMembers {
-		err := party.AddMember(pkmn)
-		if err != nil {
-			logger.Info("Failed to add Pokémon to party: %v", err)
-		}
+	if data.PartyMembers != nil {
+		party.Members = data.PartyMembers
 	}
 
 	cfg := &config{
@@ -135,22 +140,27 @@ func InitializeConfig(logLevel logger.LogLevel) *config {
 		persistence:   persistence,
 		caughtPokemon: data.CaughtPokemon,
 		logger:        logger,
+		party:         party,
 	}
 
 	return cfg
 }
 
 func saveData(cfg *config) error {
+	cfg.logger.Debug("Saving data")
 	if cfg.persistence == nil {
+		cfg.logger.Error("Persistence not initialized")
 		return errors.New("persistence not initialized")
 	}
 
 	data := &pokedata.Data{
 		CaughtPokemon: cfg.caughtPokemon,
+		PartyMembers:  cfg.party.Members,
 	}
 
 	err := cfg.persistence.Save(data)
 	if err != nil {
+		cfg.logger.Error("Failed to save data: %v", err)
 		return err
 	}
 
@@ -177,8 +187,8 @@ func startRepl(cfg *config) {
 
 	reader := bufio.NewScanner(os.Stdin)
 	for {
+		cfg.logger.Debug("Getting input")
 		fmt.Print("Pokedex > ")
-		cfg.logger.Debug("Waiting for input")
 		reader.Scan()
 
 		words := cleanInput(reader.Text())

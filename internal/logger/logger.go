@@ -1,5 +1,7 @@
 package logger
 
+// TODO: Does the logger also keep normal fmt.Println() output?
+
 import (
 	"fmt"
 	"io"
