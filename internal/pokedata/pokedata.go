@@ -37,7 +37,7 @@ func NewPersistence(filename string) (*Persistence, error) {
 			log.Debug("Write test successful")
 
 			// We have write permission, create directory here
-			dir := filepath.Join(workDir, ".pokedexcli")
+			dir := filepath.Join(workDir, ".pokedexclidata")
 			if err := os.MkdirAll(dir, os.ModePerm); err == nil {
 				filePath := filepath.Join(dir, filename)
 				log.Info("Using save file: %s\n", filePath)
