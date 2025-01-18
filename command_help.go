@@ -1,9 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-func commandHelp(cfg *config, args ...string) error {
-	cfg.logger.Debug("Executing 'help' command")
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+)
+
+func commandHelp(cfg *pokeconfig.Config, args ...string) error {
+	cfg.Logger.Debug("Executing 'help' command")
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
@@ -14,6 +18,6 @@ func commandHelp(cfg *config, args ...string) error {
 	}
 
 	fmt.Println()
-	cfg.logger.Debug("Displayed help")
+	cfg.Logger.Debug("Displayed help")
 	return nil
 }

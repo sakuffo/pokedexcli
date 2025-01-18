@@ -3,10 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 )
 
-func commandParty(cfg *config, args ...string) error {
-	cfg.logger.Debug("Executing 'party' command")
+func commandParty(cfg *pokeconfig.Config, args ...string) error {
+	cfg.Logger.Debug("Executing 'party' command")
 	if len(args) == 0 {
 		return commandPartyList(cfg, args...)
 	}
@@ -18,27 +20,27 @@ func commandParty(cfg *config, args ...string) error {
 		return commandPartyList(cfg, args[1:]...)
 	case "inspect":
 		if len(args) != 2 {
-			cfg.logger.Error("Inspect command called without a nickname")
+			cfg.Logger.Error("Inspect command called without a nickname")
 			return errors.New("inspect requires a nickname")
 		}
 		return commandPartyInspect(cfg, args[1])
 	case "remove":
 		return commandPartyRemove(cfg, args[1])
 	default:
-		cfg.logger.Error("Unknown party subcommand: %s", subcommand)
+		cfg.Logger.Error("Unknown party subcommand: %s", subcommand)
 		return errors.New("Unknown party subcommand")
 	}
 }
 
-func commandPartyList(cfg *config, args ...string) error {
-	members := cfg.party.ListMembers()
+func commandPartyList(cfg *pokeconfig.Config, args ...string) error {
+	members := cfg.Party.ListMembers()
 	if len(members) == 0 {
-		cfg.logger.Info("No party members found")
+		cfg.Logger.Info("No party members found")
 		fmt.Println("No party members found")
 		return nil
 	}
 
-	cfg.logger.Info("Listing party members")
+	cfg.Logger.Info("Listing party members")
 	fmt.Println("Party Members:")
 	for _, pokemon := range members {
 		fmt.Printf(" - Name: %s | Level: %d | XP: %d | Species: %s\n", pokemon.Nickname, pokemon.Level, pokemon.Experience, pokemon.BasePokemon.Species.Name)
@@ -46,18 +48,18 @@ func commandPartyList(cfg *config, args ...string) error {
 	return nil
 }
 
-func commandPartyInspect(cfg *config, nickname string) error {
-	cfg.logger.Debug("Inspecting party member: %s", nickname)
+func commandPartyInspect(cfg *pokeconfig.Config, nickname string) error {
+	cfg.Logger.Debug("Inspecting party member: %s", nickname)
 	fmt.Printf("Inspecting party member: %s\n", nickname)
 	fmt.Println("--------------Inspecting------------------")
-	pokemon, err := cfg.party.GetMember(nickname)
+	pokemon, err := cfg.Party.GetMember(nickname)
 	if err != nil {
-		cfg.logger.Error("Party member not found: %s", nickname)
+		cfg.Logger.Error("Party member not found: %s", nickname)
 		fmt.Println("Party member not found: %s", nickname)
 		return err
 	}
 
-	cfg.logger.Info("Displaying details for party member: %s", nickname)
+	cfg.Logger.Info("Displaying details for party member: %s", nickname)
 	fmt.Printf("Name: %s\n", pokemon.Nickname)
 	fmt.Printf("Level: \033[32m%d\033[0m\n", pokemon.Level)
 	fmt.Printf("Experience: \033[32m%d\033[0m\n", pokemon.Experience)
@@ -81,16 +83,16 @@ func commandPartyInspect(cfg *config, nickname string) error {
 	return nil
 }
 
-func commandPartyRemove(cfg *config, nickname string) error {
-	cfg.logger.Debug("Removing party member: %s", nickname)
+func commandPartyRemove(cfg *pokeconfig.Config, nickname string) error {
+	cfg.Logger.Debug("Removing party member: %s", nickname)
 	fmt.Printf("Removing party member: %s\n", nickname)
-	err := cfg.party.RemoveMember(nickname)
+	err := cfg.Party.RemoveMember(nickname)
 	if err != nil {
-		cfg.logger.Error("Failed to remove party member: %s", nickname)
+		cfg.Logger.Error("Failed to remove party member: %s", nickname)
 		fmt.Println("Failed to remove party member: %s", nickname)
 		return err
 	}
-	cfg.logger.Info("Party member removed: %s", nickname)
+	cfg.Logger.Info("Party member removed: %s", nickname)
 	fmt.Println("Party member removed: %s", nickname)
 	return nil
 }

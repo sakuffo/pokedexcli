@@ -1,16 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-func commandPokedex(cfg *config, args ...string) error {
-	cfg.logger.Info("Executing 'pokedex' command")
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+)
+
+func commandPokedex(cfg *pokeconfig.Config, args ...string) error {
+	cfg.Logger.Info("Executing 'pokedex' command")
 
 	fmt.Println("Your Pokedex:")
-	fmt.Printf("You have caught %d pokemon\n", len(cfg.caughtPokemon))
-	for _, pokemon := range cfg.caughtPokemon {
+	fmt.Printf("You have caught %d pokemon\n", len(cfg.CaughtPokemon))
+	for _, pokemon := range cfg.CaughtPokemon {
 		fmt.Printf("  - %s\n", pokemon.Name)
 	}
 
-	cfg.logger.Info("Displayed Pokedex with %d pokemon", len(cfg.caughtPokemon))
+	cfg.Logger.Info("Displayed Pokedex with %d pokemon", len(cfg.CaughtPokemon))
 	return nil
 }

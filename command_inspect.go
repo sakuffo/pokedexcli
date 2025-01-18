@@ -3,24 +3,26 @@ package main
 import (
 	"errors"
 	"fmt"
+
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 )
 
-func commandInspect(cfg *config, args ...string) error {
+func commandInspect(cfg *pokeconfig.Config, args ...string) error {
 	if len(args) != 1 {
-		cfg.logger.Error("Inspect command called without a pokemon name")
+		cfg.Logger.Error("Inspect command called without a pokemon name")
 		return errors.New("inspect requires a pokemon name")
 	}
 
 	pokemonName := args[0]
-	cfg.logger.Info("Executing 'inspect' command for %s", pokemonName)
+	cfg.Logger.Info("Executing 'inspect' command for %s", pokemonName)
 
-	pokemon, exists := cfg.caughtPokemon[pokemonName]
+	pokemon, exists := cfg.CaughtPokemon[pokemonName]
 	if !exists {
-		cfg.logger.Error("Attempted to inspect uncaught Pokemon: %s", pokemonName)
+		cfg.Logger.Error("Attempted to inspect uncaught Pokemon: %s", pokemonName)
 		return errors.New("You haven't caught this pokemon yet")
 	}
 
-	cfg.logger.Info("Displaying details for Pokemon: %s", pokemonName)
+	cfg.Logger.Info("Displaying details for Pokemon: %s", pokemonName)
 
 	fmt.Printf("Name: %s\n", pokemon.Name)
 	fmt.Printf("Height: \033[32m%d\033[0m\n", pokemon.Height)

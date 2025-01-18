@@ -3,21 +3,23 @@ package main
 import (
 	"errors"
 	"fmt"
+
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 )
 
-func commandExplore(cfg *config, args ...string) error {
-	
+func commandExplore(cfg *pokeconfig.Config, args ...string) error {
+
 	if len(args) != 1 {
-		cfg.logger.Error("Area is required")
+		cfg.Logger.Error("Area is required")
 		return errors.New("area is required")
 	}
 
 	area := args[0]
-	cfg.logger.Info("Exploring area: %s", area)
+	cfg.Logger.Info("Exploring area: %s", area)
 
-	exploreResp, err := cfg.pokeapiClient.FetchAreaPokemon(area)
+	exploreResp, err := cfg.PokeapiClient.FetchAreaPokemon(area)
 	if err != nil {
-		cfg.logger.Error("Failed to fetch area %s: %v", area, err)
+		cfg.Logger.Error("Failed to fetch area %s: %v", area, err)
 		return err
 	}
 

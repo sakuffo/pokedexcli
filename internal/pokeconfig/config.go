@@ -14,17 +14,17 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-type config struct {
-	pokeapiClient    pokeapi.Client
-	nextLocationsURL *string
-	prevLocationsURL *string
-	caughtPokemon    map[string]pokeapi.Pokemon
-	persistence      *pokedata.Persistence
-	logger           *logger.Logger
-	party            *party.Party
+type Config struct {
+	PokeapiClient    pokeapi.Client
+	NextLocationsURL *string
+	PrevLocationsURL *string
+	CaughtPokemon    map[string]pokeapi.Pokemon
+	Persistence      *pokedata.Persistence
+	Logger           *logger.Logger
+	Party            *party.Party
 }
 
-func New(logLevel logger.LogLevel) *config {
+func New(logLevel logger.LogLevel) *Config {
 
 	// Show the log level if its not none
 	if logLevel != logger.NONE {
@@ -64,12 +64,12 @@ func New(logLevel logger.LogLevel) *config {
 		party.Members = data.PartyMembers
 	}
 
-	cfg := &config{
-		pokeapiClient: pokeClient,
-		persistence:   persistence,
-		caughtPokemon: data.CaughtPokemon,
-		logger:        logger,
-		party:         party,
+	cfg := &Config{
+		PokeapiClient: pokeClient,
+		Persistence:   persistence,
+		CaughtPokemon: data.CaughtPokemon,
+		Logger:        logger,
+		Party:         party,
 	}
 
 	return cfg
