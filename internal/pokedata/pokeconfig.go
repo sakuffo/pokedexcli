@@ -1,4 +1,4 @@
-package pokeconfig
+package pokedata
 
 import (
 	"fmt"
@@ -11,7 +11,6 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/party"
 	"github.com/sakuffo/pokedexcli/internal/pokeapi"
 	"github.com/sakuffo/pokedexcli/internal/pokecache"
-	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
 type Config struct {
@@ -19,7 +18,7 @@ type Config struct {
 	NextLocationsURL *string
 	PrevLocationsURL *string
 	CaughtPokemon    map[string]pokeapi.Pokemon
-	Persistence      *pokedata.Persistence
+	Persistence      *Persistence
 	Logger           *logger.Logger
 	Party            *party.Party
 }
@@ -43,7 +42,7 @@ func New(logLevel logger.LogLevel) *Config {
 	cache := pokecache.NewCache(5*time.Minute, logger)
 	pokeClient := pokeapi.NewClient(5*time.Second, cache, logger)
 
-	persistence, err := pokedata.NewPersistence("pokedata.json")
+	persistence, err := NewPersistence("pokedata.json")
 	if err != nil {
 		logger.Fatal("Failed to initialize persistence: %v", err)
 	}

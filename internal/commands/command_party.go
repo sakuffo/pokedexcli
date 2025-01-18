@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandParty(cfg *pokeconfig.Config, args ...string) error {
+func commandParty(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'party' command")
 	if len(args) == 0 {
 		return commandPartyList(cfg, args...)
@@ -32,7 +32,7 @@ func commandParty(cfg *pokeconfig.Config, args ...string) error {
 	}
 }
 
-func commandPartyList(cfg *pokeconfig.Config, args ...string) error {
+func commandPartyList(cfg *pokedata.Config, args ...string) error {
 	members := cfg.Party.ListMembers()
 	if len(members) == 0 {
 		cfg.Logger.Info("No party members found")
@@ -48,7 +48,7 @@ func commandPartyList(cfg *pokeconfig.Config, args ...string) error {
 	return nil
 }
 
-func commandPartyInspect(cfg *pokeconfig.Config, nickname string) error {
+func commandPartyInspect(cfg *pokedata.Config, nickname string) error {
 	cfg.Logger.Debug("Inspecting party member: %s", nickname)
 	fmt.Printf("Inspecting party member: %s\n", nickname)
 	fmt.Println("--------------Inspecting------------------")
@@ -83,7 +83,7 @@ func commandPartyInspect(cfg *pokeconfig.Config, nickname string) error {
 	return nil
 }
 
-func commandPartyRemove(cfg *pokeconfig.Config, nickname string) error {
+func commandPartyRemove(cfg *pokedata.Config, nickname string) error {
 	cfg.Logger.Debug("Removing party member: %s", nickname)
 	fmt.Printf("Removing party member: %s\n", nickname)
 	err := cfg.Party.RemoveMember(nickname)

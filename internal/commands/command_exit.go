@@ -3,10 +3,10 @@ package commands
 import (
 	"os"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandExit(cfg *pokeconfig.Config, args ...string) error {
+func commandExit(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Exiting Pokedex")
 	os.Exit(0)
 	return nil

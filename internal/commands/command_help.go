@@ -3,18 +3,18 @@ package commands
 import (
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandHelp(cfg *pokeconfig.Config, args ...string) error {
+func commandHelp(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'help' command")
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
 
-	for _, cmd := range getCommands() {
-		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
+	for _, cmd := range GetCommands() {
+		fmt.Printf("%s: %s\n", cmd.Name, cmd.Description)
 	}
 
 	fmt.Println()

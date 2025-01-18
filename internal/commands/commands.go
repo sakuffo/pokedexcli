@@ -1,14 +1,14 @@
 package commands
 
-import "github.com/sakuffo/pokedexcli/internal/pokeconfig"
+import "github.com/sakuffo/pokedexcli/internal/pokedata"
 
 type cliCommand struct {
 	Name        string
 	Description string
-	Callback    func(*pokeconfig.Config, ...string) error
+	Callback    func(*pokedata.Config, ...string) error
 }
 
-func getCommands() map[string]cliCommand {
+func GetCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"help": {
 			Name:        "help",

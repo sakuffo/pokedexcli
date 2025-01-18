@@ -2,18 +2,15 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/commands"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
-
-// types
 
 // functions
 
@@ -23,11 +20,7 @@ func cleanInput(text string) []string {
 	return words
 }
 
-
-
-
-
-func startRepl(cfg *pokeconfig.Config) {
+func startRepl(cfg *pokedata.Config) {
 	cfg.Logger.Debug("Starting REPL")
 
 	sigChan := make(chan os.Signal, 1)
@@ -37,7 +30,7 @@ func startRepl(cfg *pokeconfig.Config) {
 		<-sigChan
 		cfg.Logger.Debug("Received interrupt signal, saving data and exiting...")
 		fmt.Println("\nReceived interrupt signal, saving data and exiting...")
-		err := saveData(cfg)
+		err := pokedata.SaveData(cfg)
 		if err != nil {
 			cfg.Logger.Error("Failed to save data: %v", err)
 			fmt.Printf("Failed to save data: %v\n", err)
@@ -64,9 +57,9 @@ func startRepl(cfg *pokeconfig.Config) {
 
 		cfg.Logger.Debug("User entered command: %s with args: %v", commandName, args)
 
-		command, exists := getCommands()[commandName]
+		command, exists := commands.GetCommands()[commandName]
 		if exists {
-			err := command.callback(cfg, args...)
+			err := command.Callback(cfg, args...)
 			if err != nil {
 				cfg.Logger.Error("Error executing command: '%s': %v", commandName, err)
 				fmt.Println(err)

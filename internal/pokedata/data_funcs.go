@@ -2,11 +2,9 @@ package pokedata
 
 import (
 	"errors"
-
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 )
 
-func SaveData(cfg *pokeconfig.Config) error {
+func SaveData(cfg *Config) error {
 	cfg.Logger.Debug("Saving data")
 	if cfg.Persistence == nil {
 		cfg.Logger.Error("Persistence not initialized")

@@ -3,10 +3,10 @@ package commands
 import (
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandPokedex(cfg *pokeconfig.Config, args ...string) error {
+func commandPokedex(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Info("Executing 'pokedex' command")
 
 	fmt.Println("Your Pokedex:")

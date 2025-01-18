@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func StartWebServer(cfg *pokeconfig.Config) {
+func StartWebServer(cfg *pokedata.Config) {
 	http.HandleFunc("/help", handleHelp(cfg))
 	http.HandleFunc("/catch", handleCatch(cfg))
 	// http.HandleFunc("/pokedex", handlePokedex(cfg))
@@ -28,9 +28,9 @@ func StartWebServer(cfg *pokeconfig.Config) {
 	}
 }
 
-func handleHelp(cfg *pokeconfig.Config) http.HandlerFunc {
+func handleHelp(cfg *pokedata.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := commandHelp(cfg)
+		err := commands.commandHelp(cfg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -40,7 +40,7 @@ func handleHelp(cfg *pokeconfig.Config) http.HandlerFunc {
 	}
 }
 
-func handleCatch(cfg *pokeconfig.Config) http.HandlerFunc {
+func handleCatch(cfg *pokedata.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request struct {
 			Name string `json:"name"`
@@ -50,7 +50,7 @@ func handleCatch(cfg *pokeconfig.Config) http.HandlerFunc {
 			return
 		}
 
-		err := commandCatch(cfg, request.Name)
+		err := commands.commandCatch(cfg, request.Name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -59,21 +59,21 @@ func handleCatch(cfg *pokeconfig.Config) http.HandlerFunc {
 	}
 }
 
-func handlePokedex(cfg *pokeconfig.Config) error {
+func handlePokedex(cfg *pokedata.Config) error {
 	return nil
 }
-func handlePokedexInspect(cfg *pokeconfig.Config) error {
+func handlePokedexInspect(cfg *pokedata.Config) error {
 	return nil
 }
-func handleParty(cfg *pokeconfig.Config) error {
+func handleParty(cfg *pokedata.Config) error {
 	return nil
 }
-func handleMapForward(cfg *pokeconfig.Config) error {
+func handleMapForward(cfg *pokedata.Config) error {
 	return nil
 }
-func handleMapBack(cfg *pokeconfig.Config) error {
+func handleMapBack(cfg *pokedata.Config) error {
 	return nil
 }
-func handleExplore(cfg *pokeconfig.Config) error {
+func handleExplore(cfg *pokedata.Config) error {
 	return nil
 }
