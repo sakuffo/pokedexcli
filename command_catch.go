@@ -5,9 +5,11 @@ import (
 	"fmt"
 
 	"golang.org/x/exp/rand"
+
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 )
 
-func commandCatch(cfg *config, args ...string) error {
+func commandCatch(cfg *pokeconfig.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.logger.Error("Pokemon name is required")
 		return errors.New("pokemon name is required")

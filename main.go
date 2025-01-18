@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sakuffo/pokedexcli/internal/logger"
+	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
 	"golang.org/x/exp/rand"
 )
 
@@ -30,7 +31,7 @@ func main() {
 	rand.Seed(uint64(time.Now().UnixNano()))
 
 	// Initialize configuration with persistence
-	cfg := InitializeConfig(level)
+	cfg := pokeconfig.New(level)
 
 	startRepl(cfg)
 }
