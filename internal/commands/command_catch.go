@@ -9,7 +9,7 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandCatch(cfg *pokedata.Config, args ...string) error {
+func CommandCatch(cfg *pokedata.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.Logger.Error("Pokemon name is required")
 		return errors.New("pokemon name is required")

@@ -7,7 +7,7 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandInspect(cfg *pokedata.Config, args ...string) error {
+func CommandInspect(cfg *pokedata.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.Logger.Error("Inspect command called without a pokemon name")
 		return errors.New("inspect requires a pokemon name")

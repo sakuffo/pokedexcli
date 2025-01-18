@@ -7,7 +7,7 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandMapf(cfg *pokedata.Config, args ...string) error {
+func CommandMapf(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Fetching next page of locations")
 	locationsResp, err := cfg.PokeapiClient.ListLocations(cfg.NextLocationsURL)
 	if err != nil {
@@ -27,7 +27,7 @@ func commandMapf(cfg *pokedata.Config, args ...string) error {
 	return nil
 }
 
-func commandMapb(cfg *pokedata.Config, args ...string) error {
+func CommandMapb(cfg *pokedata.Config, args ...string) error {
 	if cfg.PrevLocationsURL == nil {
 		cfg.Logger.Error("No previous page available")
 		return errors.New("no previous page")

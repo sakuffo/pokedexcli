@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/sakuffo/pokedexcli/internal/commands"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
@@ -30,7 +31,7 @@ func StartWebServer(cfg *pokedata.Config) {
 
 func handleHelp(cfg *pokedata.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := commands.commandHelp(cfg)
+		err := commands.CommandHelp(cfg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -50,7 +51,7 @@ func handleCatch(cfg *pokedata.Config) http.HandlerFunc {
 			return
 		}
 
-		err := commands.commandCatch(cfg, request.Name)
+		err := commands.CommandCatch(cfg, request.Name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

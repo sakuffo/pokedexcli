@@ -6,7 +6,7 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandHelp(cfg *pokedata.Config, args ...string) error {
+func CommandHelp(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'help' command")
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")

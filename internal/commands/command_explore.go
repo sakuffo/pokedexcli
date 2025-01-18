@@ -7,7 +7,7 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandExplore(cfg *pokedata.Config, args ...string) error {
+func CommandExplore(cfg *pokedata.Config, args ...string) error {
 
 	if len(args) != 1 {
 		cfg.Logger.Error("Area is required")

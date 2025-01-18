@@ -7,32 +7,32 @@ import (
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func commandParty(cfg *pokedata.Config, args ...string) error {
+func CommandParty(cfg *pokedata.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'party' command")
 	if len(args) == 0 {
-		return commandPartyList(cfg, args...)
+		return CommandPartyList(cfg, args...)
 	}
 
 	subcommand := args[0]
 
 	switch subcommand {
 	case "list":
-		return commandPartyList(cfg, args[1:]...)
+		return CommandPartyList(cfg, args[1:]...)
 	case "inspect":
 		if len(args) != 2 {
 			cfg.Logger.Error("Inspect command called without a nickname")
 			return errors.New("inspect requires a nickname")
 		}
-		return commandPartyInspect(cfg, args[1])
+		return CommandPartyInspect(cfg, args[1])
 	case "remove":
-		return commandPartyRemove(cfg, args[1])
+		return CommandPartyRemove(cfg, args[1])
 	default:
 		cfg.Logger.Error("Unknown party subcommand: %s", subcommand)
 		return errors.New("Unknown party subcommand")
 	}
 }
 
-func commandPartyList(cfg *pokedata.Config, args ...string) error {
+func CommandPartyList(cfg *pokedata.Config, args ...string) error {
 	members := cfg.Party.ListMembers()
 	if len(members) == 0 {
 		cfg.Logger.Info("No party members found")
@@ -48,7 +48,7 @@ func commandPartyList(cfg *pokedata.Config, args ...string) error {
 	return nil
 }
 
-func commandPartyInspect(cfg *pokedata.Config, nickname string) error {
+func CommandPartyInspect(cfg *pokedata.Config, nickname string) error {
 	cfg.Logger.Debug("Inspecting party member: %s", nickname)
 	fmt.Printf("Inspecting party member: %s\n", nickname)
 	fmt.Println("--------------Inspecting------------------")
@@ -83,7 +83,7 @@ func commandPartyInspect(cfg *pokedata.Config, nickname string) error {
 	return nil
 }
 
-func commandPartyRemove(cfg *pokedata.Config, nickname string) error {
+func CommandPartyRemove(cfg *pokedata.Config, nickname string) error {
 	cfg.Logger.Debug("Removing party member: %s", nickname)
 	fmt.Printf("Removing party member: %s\n", nickname)
 	err := cfg.Party.RemoveMember(nickname)
