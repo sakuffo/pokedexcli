@@ -15,12 +15,6 @@ import (
 
 // types
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func(*pokeconfig.Config, ...string) error
-}
-
 // functions
 
 func cleanInput(text string) []string {
@@ -29,76 +23,9 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
-		"help": {
-			name:        "help",
-			description: "Displays a help message",
-			callback:    commandHelp,
-		},
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
-		"map": {
-			name:        "map",
-			description: "Lists the next 20 locations",
-			callback:    commandMapf,
-		},
-		"mapb": {
-			name:        "mapb",
-			description: "Lists the previous 20 locations",
-			callback:    commandMapb,
-		},
-		"explore": {
-			name:        "explore",
-			description: "Lists the pokemon in the area",
-			callback:    commandExplore,
-		},
-		"catch": {
-			name:        "catch",
-			description: "Attempts to catch a pokemon",
-			callback:    commandCatch,
-		},
-		"inspect": {
-			name:        "inspect",
-			description: "Inspects a pokemon in you have caught",
-			callback:    commandInspect,
-		},
-		"pokedex": {
-			name:        "pokedex",
-			description: "Lists all the pokemon you have caught",
-			callback:    commandPokedex,
-		},
-		"party": {
-			name:        "party",
-			description: "Lists all the pokemon in your party",
-			callback:    commandParty,
-		},
-	}
-}
 
-func saveData(cfg *pokeconfig.Config) error {
-	cfg.Logger.Debug("Saving data")
-	if cfg.Persistence == nil {
-		cfg.Logger.Error("Persistence not initialized")
-		return errors.New("persistence not initialized")
-	}
 
-	data := &pokedata.Data{
-		CaughtPokemon: cfg.CaughtPokemon,
-		PartyMembers:  cfg.Party.Members,
-	}
 
-	err := cfg.Persistence.Save(data)
-	if err != nil {
-		cfg.Logger.Error("Failed to save data: %v", err)
-		return err
-	}
-
-	return nil
-}
 
 func startRepl(cfg *pokeconfig.Config) {
 	cfg.Logger.Debug("Starting REPL")

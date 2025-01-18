@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 	"golang.org/x/exp/rand"
 
 	"github.com/sakuffo/pokedexcli/internal/pokeconfig"
+	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
 func commandCatch(cfg *pokeconfig.Config, args ...string) error {
@@ -48,7 +49,7 @@ func commandCatch(cfg *pokeconfig.Config, args ...string) error {
 		fmt.Printf("%s was added to your party.\n", pokemonName)
 	}
 
-	err = saveData(cfg)
+	err = pokedata.SaveData(cfg)
 	if err != nil {
 		cfg.Logger.Error("Failed to save data after catching %s: %v", pokemonName, err)
 		fmt.Printf("Failed to save data: %v\n", err)

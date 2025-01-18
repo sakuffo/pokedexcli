@@ -1,6 +1,7 @@
 package web_server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -8,8 +9,8 @@ import (
 )
 
 func StartWebServer(cfg *pokeconfig.Config) {
-	// http.HandleFunc("/help", handleHelp(cfg))
-	// http.HandleFunc("/catch", handleCatch(cfg))
+	http.HandleFunc("/help", handleHelp(cfg))
+	http.HandleFunc("/catch", handleCatch(cfg))
 	// http.HandleFunc("/pokedex", handlePokedex(cfg))
 	// http.HandleFunc("/pokedex/inspect/", handlePokedexInspect(cfg))
 	// http.HandleFunc("/party", handleParty(cfg))
@@ -27,12 +28,37 @@ func StartWebServer(cfg *pokeconfig.Config) {
 	}
 }
 
-func handleHelp(cfg *pokeconfig.Config) error {
-	return nil
+func handleHelp(cfg *pokeconfig.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := commandHelp(cfg)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Help command executed successfully"))
+	}
 }
-func handleCatch(cfg *pokeconfig.Config) error {
-	return nil
+
+func handleCatch(cfg *pokeconfig.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var request struct {
+			Name string `json:"name"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err := commandCatch(cfg, request.Name)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
 }
+
 func handlePokedex(cfg *pokeconfig.Config) error {
 	return nil
 }
