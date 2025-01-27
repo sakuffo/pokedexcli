@@ -14,13 +14,14 @@ import (
 )
 
 type Config struct {
-	PokeapiClient    pokeapi.Client
-	NextLocationsURL *string
-	PrevLocationsURL *string
-	CaughtPokemon    map[string]pokeapi.Pokemon
-	Persistence      *Persistence
-	Logger           *logger.Logger
-	Party            *party.Party
+	PokeapiClient     pokeapi.Client
+	NextLocationsURL  *string
+	PrevLocationsURL  *string
+	CaughtPokemon     map[string]pokeapi.Pokemon
+	DiscoveredPokemon map[string]map[string]bool
+	Persistence       *Persistence
+	Logger            *logger.Logger
+	Party             *party.Party
 }
 
 func New(logLevel logger.LogLevel) *Config {
@@ -64,11 +65,12 @@ func New(logLevel logger.LogLevel) *Config {
 	}
 
 	cfg := &Config{
-		PokeapiClient: pokeClient,
-		Persistence:   persistence,
-		CaughtPokemon: data.CaughtPokemon,
-		Logger:        logger,
-		Party:         party,
+		PokeapiClient:     pokeClient,
+		Persistence:       persistence,
+		CaughtPokemon:     data.CaughtPokemon,
+		DiscoveredPokemon: data.DiscoveredPokemon,
+		Logger:            logger,
+		Party:             party,
 	}
 
 	return cfg

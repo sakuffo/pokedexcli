@@ -1,13 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 
+	"github.com/chzyer/readline"
 	"github.com/sakuffo/pokedexcli/internal/commands"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
@@ -38,13 +39,39 @@ func startRepl(cfg *pokedata.Config) {
 		os.Exit(0)
 	}()
 
-	reader := bufio.NewScanner(os.Stdin)
+	rl, err := readline.NewEx(&readline.Config{
+		Prompt:          "Pokedex > ",
+		HistoryFile:     ".pokedex_history",
+		HistoryLimit:    100,
+		InterruptPrompt: "^C",
+	})
+	if err != nil {
+		cfg.Logger.Error("Error initializing readline: %v", err)
+		panic(err)
+	}
+	defer rl.Close()
+
 	for {
 		cfg.Logger.Debug("Getting input")
-		fmt.Print("Pokedex > ")
-		reader.Scan()
+		line, err := rl.Readline()
+		if err != nil {
+			if err == readline.ErrInterrupt {
+				cfg.Logger.Debug("Received interrupt")
+				err := pokedata.SaveData(cfg)
+				if err != nil {
+					cfg.Logger.Error("Failed to save data: %v", err)
+					fmt.Printf("Failed to save data: %v\n", err)
+				}
+				os.Exit(0)
+			} else if err == io.EOF {
+				cfg.Logger.Debug("Received EOF")
+				break
+			}
+			cfg.Logger.Error("Error reading line: %v", err)
+			break
+		}
 
-		words := cleanInput(reader.Text())
+		words := cleanInput(line)
 		if len(words) == 0 {
 			continue
 		}

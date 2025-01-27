@@ -3,12 +3,17 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func CommandExplore(cfg *pokedata.Config, args ...string) error {
+const (
+	colorGreen = "\033[32m"
+	colorReset = "\033[0m"
+)
 
+func CommandExplore(cfg *pokedata.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.Logger.Error("Area is required")
 		return errors.New("area is required")
@@ -23,11 +28,62 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 		return err
 	}
 
-	fmt.Printf("Exploring %s...\n", area)
-	fmt.Println("Found Pokemon: ")
-	for _, poke := range exploreResp.PokemonEncounters {
-		fmt.Printf("\t- %s\n", poke.Pokemon.Name)
+	// Initialize the area in discovered map if it doesn't exist
+	if _, exists := cfg.DiscoveredPokemon[area]; !exists {
+		cfg.DiscoveredPokemon[area] = make(map[string]bool)
 	}
+
+	// Get all undiscovered pokemon in this area
+	var undiscovered []string
+	for _, poke := range exploreResp.PokemonEncounters {
+		if !cfg.DiscoveredPokemon[area][poke.Pokemon.Name] {
+			undiscovered = append(undiscovered, poke.Pokemon.Name)
+		}
+	}
+
+	fmt.Printf("Exploring %s...\n\n", area)
+
+	// Track newly discovered pokemon for coloring
+	newlyDiscovered := make(map[string]bool)
+
+	if len(undiscovered) > 0 {
+		// Randomly discover 1-3 new pokemon
+		numToDiscover := rand.Intn(3) + 1
+		if numToDiscover > len(undiscovered) {
+			numToDiscover = len(undiscovered)
+		}
+
+		// Shuffle the undiscovered slice
+		rand.Shuffle(len(undiscovered), func(i, j int) {
+			undiscovered[i], undiscovered[j] = undiscovered[j], undiscovered[i]
+		})
+
+		// Mark the newly discovered pokemon
+		fmt.Println("\nYou discovered new Pokemon!\n")
+		for i := 0; i < numToDiscover; i++ {
+			pokeName := undiscovered[i]
+			cfg.DiscoveredPokemon[area][pokeName] = true
+			newlyDiscovered[pokeName] = true
+		}
+	}
+
+	// Show all discovered Pokemon in this area
+	fmt.Println("Pokemon discovered in this area:")
+	discoveredCount := 0
+	totalPokemon := len(exploreResp.PokemonEncounters)
+
+	for _, poke := range exploreResp.PokemonEncounters {
+		if cfg.DiscoveredPokemon[area][poke.Pokemon.Name] {
+			discoveredCount++
+			if newlyDiscovered[poke.Pokemon.Name] {
+				fmt.Printf("\t- %s%s%s (New!)\n", colorGreen, poke.Pokemon.Name, colorReset)
+			} else {
+				fmt.Printf("\t- %s\n", poke.Pokemon.Name)
+			}
+		}
+	}
+
+	fmt.Printf("\nProgress: %d/%d Pokemon discovered in this area\n", discoveredCount, totalPokemon)
 
 	return nil
 }

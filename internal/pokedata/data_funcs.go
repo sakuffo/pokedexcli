@@ -12,8 +12,9 @@ func SaveData(cfg *Config) error {
 	}
 
 	data := &Data{
-		CaughtPokemon: cfg.CaughtPokemon,
-		PartyMembers:  cfg.Party.Members,
+		CaughtPokemon:     cfg.CaughtPokemon,
+		PartyMembers:      cfg.Party.Members,
+		DiscoveredPokemon: cfg.DiscoveredPokemon,
 	}
 
 	err := cfg.Persistence.Save(data)
