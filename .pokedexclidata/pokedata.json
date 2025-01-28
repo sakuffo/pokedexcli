@@ -4325,6 +4325,22 @@
     }
   ],
   "discovered_pokemon": {
+    "great-marsh": {
+      "azurill": true,
+      "barboach": true,
+      "bibarel": true,
+      "bidoof": true,
+      "budew": true,
+      "gyarados": true,
+      "hoothoot": true,
+      "noctowl": true,
+      "quagsire": true,
+      "starly": true,
+      "tropius": true,
+      "whiscash": true,
+      "wooper": true,
+      "yanma": true
+    },
     "mt-coronet": {
       "barboach": true,
       "bronzong": true,
@@ -4401,6 +4417,9 @@
       "graveler": true,
       "nosepass": true,
       "solrock": true
+    },
+    "solaceon-ruins": {
+      "unown": true
     }
   }
 }

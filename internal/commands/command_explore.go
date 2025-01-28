@@ -84,10 +84,10 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 			if newlyDiscovered[poke.Pokemon.Name] {
 				fmt.Printf("\t- %s%s%s (New!)\n", colorGreen, poke.Pokemon.Name, colorReset)
 			} else {
-				fmt.Printf("\t- %s (Previously discovered in %s)\n", poke.Pokemon.Name, locationName)
+				fmt.Printf("\t- %s \n", poke.Pokemon.Name)
 			}
 		} else {
-			fmt.Printf("\t- ??? (Undiscovered)\n")
+			fmt.Printf("\t- ??? \n")
 		}
 	}
 
