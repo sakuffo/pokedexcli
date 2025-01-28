@@ -14,12 +14,15 @@ const (
 )
 
 func CommandExplore(cfg *pokedata.Config, args ...string) error {
+
+	// Check if area is provided
 	if len(args) != 1 {
 		cfg.Logger.Error("Area is required")
 		return errors.New("area is required")
 	}
 
 	area := args[0]
+
 	cfg.Logger.Info("Exploring area: %s", area)
 
 	exploreResp, err := cfg.PokeapiClient.FetchAreaPokemon(area)
@@ -27,17 +30,23 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 		cfg.Logger.Error("Failed to fetch area %s: %v", area, err)
 		return err
 	}
+	locationName := exploreResp.Location.Name
 
 	// Initialize the area in discovered map if it doesn't exist
-	if _, exists := cfg.DiscoveredPokemon[area]; !exists {
-		cfg.DiscoveredPokemon[area] = make(map[string]bool)
+	if _, exists := cfg.DiscoveredPokemon[locationName]; !exists {
+		cfg.DiscoveredPokemon[locationName] = make(map[string]bool)
 	}
 
 	// Get all undiscovered pokemon in this area
 	var undiscovered []string
+	discoveredInArea := 0
+	totalInArea := len(exploreResp.PokemonEncounters)
+
 	for _, poke := range exploreResp.PokemonEncounters {
-		if !cfg.DiscoveredPokemon[area][poke.Pokemon.Name] {
+		if !cfg.DiscoveredPokemon[locationName][poke.Pokemon.Name] {
 			undiscovered = append(undiscovered, poke.Pokemon.Name)
+		} else {
+			discoveredInArea++
 		}
 	}
 
@@ -62,28 +71,26 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 		fmt.Println("\nYou discovered new Pokemon!\n")
 		for i := 0; i < numToDiscover; i++ {
 			pokeName := undiscovered[i]
-			cfg.DiscoveredPokemon[area][pokeName] = true
+			cfg.DiscoveredPokemon[locationName][pokeName] = true
 			newlyDiscovered[pokeName] = true
+			discoveredInArea++
 		}
 	}
 
-	// Show all discovered Pokemon in this area
-	fmt.Println("Pokemon discovered in this area:")
-	discoveredCount := 0
-	totalPokemon := len(exploreResp.PokemonEncounters)
-
+	// Show all Pokemon in this area and their discovery status
+	fmt.Printf("Pokemon in %s:\n", area)
 	for _, poke := range exploreResp.PokemonEncounters {
-		if cfg.DiscoveredPokemon[area][poke.Pokemon.Name] {
-			discoveredCount++
+		if cfg.DiscoveredPokemon[locationName][poke.Pokemon.Name] {
 			if newlyDiscovered[poke.Pokemon.Name] {
 				fmt.Printf("\t- %s%s%s (New!)\n", colorGreen, poke.Pokemon.Name, colorReset)
 			} else {
-				fmt.Printf("\t- %s\n", poke.Pokemon.Name)
+				fmt.Printf("\t- %s (Previously discovered in %s)\n", poke.Pokemon.Name, locationName)
 			}
+		} else {
+			fmt.Printf("\t- ??? (Undiscovered)\n")
 		}
 	}
 
-	fmt.Printf("\nProgress: %d/%d Pokemon discovered in this area\n", discoveredCount, totalPokemon)
-
+	fmt.Printf("\nProgress for this area: %d/%d Pokemon discovered\n", discoveredInArea, totalInArea)
 	return nil
 }

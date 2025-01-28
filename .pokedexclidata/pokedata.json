@@ -4325,6 +4325,26 @@
     }
   ],
   "discovered_pokemon": {
+    "mt-coronet": {
+      "barboach": true,
+      "bronzong": true,
+      "chimecho": true,
+      "chingling": true,
+      "clefairy": true,
+      "dragonair": true,
+      "dratini": true,
+      "golbat": true,
+      "graveler": true,
+      "gyarados": true,
+      "lunatone": true,
+      "machoke": true,
+      "magikarp": true,
+      "medicham": true,
+      "nosepass": true,
+      "solrock": true,
+      "whiscash": true,
+      "zubat": true
+    },
     "mt-coronet-2f": {
       "bronzong": true,
       "bronzor": true,
@@ -4348,6 +4368,37 @@
       "lunatone": true,
       "machoke": true,
       "medicham": true,
+      "nosepass": true,
+      "solrock": true
+    },
+    "mt-coronet-4f": {
+      "barboach": true,
+      "bronzong": true,
+      "chingling": true,
+      "clefairy": true,
+      "dragonair": true,
+      "dratini": true,
+      "golbat": true,
+      "graveler": true,
+      "gyarados": true,
+      "lunatone": true,
+      "machoke": true,
+      "magikarp": true,
+      "medicham": true,
+      "nosepass": true,
+      "solrock": true,
+      "whiscash": true,
+      "zubat": true
+    },
+    "mt-coronet-5f": {
+      "bronzong": true
+    },
+    "mt-coronet-6f": {
+      "bronzong": true,
+      "chimecho": true,
+      "clefairy": true,
+      "golbat": true,
+      "graveler": true,
       "nosepass": true,
       "solrock": true
     }

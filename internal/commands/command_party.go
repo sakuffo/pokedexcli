@@ -28,7 +28,7 @@ func CommandParty(cfg *pokedata.Config, args ...string) error {
 		return CommandPartyRemove(cfg, args[1])
 	default:
 		cfg.Logger.Error("Unknown party subcommand: %s", subcommand)
-		return errors.New("Unknown party subcommand")
+		return errors.New("unknown party subcommand")
 	}
 }
 

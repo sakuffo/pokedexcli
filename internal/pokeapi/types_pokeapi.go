@@ -11,6 +11,9 @@ type Locations struct {
 }
 
 type Area struct {
+	Location struct {
+		Name string `json:"name"`
+	} `json:"location"`
 	PokemonEncounters []struct {
 		Pokemon struct {
 			Name string `json:"name"`
