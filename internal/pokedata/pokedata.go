@@ -13,9 +13,9 @@ import (
 )
 
 type Data struct {
-	CaughtPokemon     map[string]pokeapi.Pokemon `json:"caught_pokemon"`
-	PartyMembers      []*party.PartyPokemon      `json:"party_members"`
-	DiscoveredPokemon map[string]map[string]bool `json:"discovered_pokemon"`
+	CaughtPokemon   map[string]pokeapi.Pokemon `json:"caught_pokemon"`
+	PartyMembers    []*party.PartyPokemon      `json:"party_members"`
+	DiscoveriesMade map[string]map[string]bool `json:"discovered_pokemon"`
 }
 type Persistence struct {
 	filePath string
@@ -102,8 +102,8 @@ func (p *Persistence) Load() (*Data, error) {
 		data.PartyMembers = []*party.PartyPokemon{}
 	}
 
-	if data.DiscoveredPokemon == nil {
-		data.DiscoveredPokemon = make(map[string]map[string]bool)
+	if data.DiscoveriesMade == nil {
+		data.DiscoveriesMade = make(map[string]map[string]bool)
 	}
 
 	return &data, nil

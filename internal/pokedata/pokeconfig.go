@@ -79,8 +79,8 @@ func New(logLevel logger.LogLevel) *Config {
 	}
 
 	// Migrate existing data if it exists
-	if data.DiscoveredPokemon != nil {
-		for location, pokemons := range data.DiscoveredPokemon {
+	if data.DiscoveriesMade != nil {
+		for location, pokemons := range data.DiscoveriesMade {
 			for pokemon, discovered := range pokemons {
 				if discovered {
 					discoveries.MarkDiscovered(location, pokemon)
