@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// Add a method to convert DiscoveryTracker to the old format for backward compatibility
+// Add a method to convert DiscoveryTracker to a map for storage in JSON
 func (d *DiscoveryTracker) ToMap() map[string]map[string]bool {
 	result := make(map[string]map[string]bool)
 
@@ -28,7 +28,7 @@ func SaveData(cfg *Config) error {
 	data := &Data{
 		CaughtPokemon:   cfg.CaughtPokemon,
 		PartyMembers:    cfg.Party.Members,
-		DiscoveriesMade: cfg.Discoveries.ToMap(), // Convert to map for storage
+		DiscoveriesMade: cfg.Discoveries.ToMap(), // Convert to map for JSON serialization & storage
 	}
 
 	err := cfg.Persistence.Save(data)
