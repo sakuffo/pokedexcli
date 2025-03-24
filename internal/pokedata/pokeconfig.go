@@ -14,14 +14,15 @@ import (
 )
 
 type Config struct {
-	PokeapiClient     pokeapi.Client
-	NextLocationsURL  *string
-	PrevLocationsURL  *string
-	CaughtPokemon     map[string]pokeapi.Pokemon
-	DiscoveredPokemon map[string]map[string]bool
-	Persistence       *Persistence
-	Logger            *logger.Logger
-	Party             *party.Party
+	PokeapiClient    pokeapi.Client
+	NextLocationsURL *string
+	PrevLocationsURL *string
+	CaughtPokemon    map[string]pokeapi.Pokemon
+	// DiscoveredPokemon map[string]map[string]bool
+	Discoveries *DiscoveryTracker
+	Persistence *Persistence
+	Logger      *logger.Logger
+	Party       *party.Party
 }
 
 func New(logLevel logger.LogLevel) *Config {
@@ -54,6 +55,9 @@ func New(logLevel logger.LogLevel) *Config {
 		log.Fatalf("Failed to load data: %v", err)
 	}
 
+	// Initialize our discovery tracker
+	discoveries := NewDiscoveryTracker()
+
 	// Create a new party
 	party := &party.Party{
 		Members: make([]*party.PartyPokemon, 0),
@@ -65,13 +69,27 @@ func New(logLevel logger.LogLevel) *Config {
 	}
 
 	cfg := &Config{
-		PokeapiClient:     pokeClient,
-		Persistence:       persistence,
-		CaughtPokemon:     data.CaughtPokemon,
-		DiscoveredPokemon: data.DiscoveredPokemon,
-		Logger:            logger,
-		Party:             party,
+		PokeapiClient: pokeClient,
+		Persistence:   persistence,
+		CaughtPokemon: data.CaughtPokemon,
+		// DiscoveredPokemon: data.DiscoveredPokemon,
+		Discoveries: discoveries,
+		Logger:      logger,
+		Party:       party,
 	}
+
+	// Migrate existing data if it exists
+	if data.DiscoveredPokemon != nil {
+		for location, pokemons := range data.DiscoveredPokemon {
+			for pokemon, discovered := range pokemons {
+				if discovered {
+					discoveries.MarkDiscovered(location, pokemon)
+				}
+			}
+		}
+	}
+
+	cfg.Discoveries = discoveries
 
 	return cfg
 }

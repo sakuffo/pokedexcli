@@ -32,23 +32,17 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 	}
 	locationName := exploreResp.Location.Name
 
-	// Initialize the area in discovered map if it doesn't exist
-	if _, exists := cfg.DiscoveredPokemon[locationName]; !exists {
-		cfg.DiscoveredPokemon[locationName] = make(map[string]bool)
-	}
-
-	// Get all undiscovered pokemon in this area
+	// Discovery Logic
 	var undiscovered []string
-	discoveredInArea := 0
 	totalInArea := len(exploreResp.PokemonEncounters)
 
 	for _, poke := range exploreResp.PokemonEncounters {
-		if !cfg.DiscoveredPokemon[locationName][poke.Pokemon.Name] {
+		if !cfg.Discoveries.IsDiscovered(locationName, poke.Pokemon.Name) {
 			undiscovered = append(undiscovered, poke.Pokemon.Name)
-		} else {
-			discoveredInArea++
 		}
 	}
+
+	discoveredInArea := cfg.Discoveries.CountDiscoveredInLocation(locationName)
 
 	fmt.Printf("Exploring %s...\n\n", area)
 
@@ -68,26 +62,29 @@ func CommandExplore(cfg *pokedata.Config, args ...string) error {
 		})
 
 		// Mark the newly discovered pokemon
-		fmt.Println("\nYou discovered new Pokemon!\n")
+		fmt.Println("\nYou discovered new Pokemon!")
 		for i := 0; i < numToDiscover; i++ {
 			pokeName := undiscovered[i]
-			cfg.DiscoveredPokemon[locationName][pokeName] = true
+			cfg.Logger.Info("Marking %s as discovered in %s", pokeName, locationName)
+			cfg.Discoveries.MarkDiscovered(locationName, pokeName)
+
+			cfg.Logger.Info("Discovered %s in %s", pokeName, locationName)
+			fmt.Printf("Discovered %s in %s\n", pokeName, locationName)
+
 			newlyDiscovered[pokeName] = true
 			discoveredInArea++
 		}
 	}
 
-	// Show all Pokemon in this area and their discovery status
-	fmt.Printf("Pokemon in %s:\n", area)
-	for _, poke := range exploreResp.PokemonEncounters {
-		if cfg.DiscoveredPokemon[locationName][poke.Pokemon.Name] {
-			if newlyDiscovered[poke.Pokemon.Name] {
-				fmt.Printf("\t- %s%s%s (New!)\n", colorGreen, poke.Pokemon.Name, colorReset)
-			} else {
-				fmt.Printf("\t- %s \n", poke.Pokemon.Name)
-			}
+	cfg.Logger.Info("Progress for this area: %d/%d Pokemon discovered", discoveredInArea, totalInArea)
+	// List all discovered pokemon in this area
+	discovered := cfg.Discoveries.GetDiscoveredInLocation(locationName)
+	for _, poke := range discovered {
+		// Print the new pokemon in green and the rest in reset
+		if newlyDiscovered[poke] {
+			fmt.Printf("\t- %s%s%s\n", colorGreen, poke, colorReset)
 		} else {
-			fmt.Printf("\t- ??? \n")
+			fmt.Printf("\t- %s\n", poke)
 		}
 	}
 

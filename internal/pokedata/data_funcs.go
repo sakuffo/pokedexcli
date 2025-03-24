@@ -4,6 +4,20 @@ import (
 	"errors"
 )
 
+// Add a method to convert DiscoveryTracker to the old format for backward compatibility
+func (d *DiscoveryTracker) ToMap() map[string]map[string]bool {
+	result := make(map[string]map[string]bool)
+
+	for location, pokemons := range d.byLocation {
+		result[location] = make(map[string]bool)
+		for pokemon := range pokemons {
+			result[location][pokemon] = true
+		}
+	}
+
+	return result
+}
+
 func SaveData(cfg *Config) error {
 	cfg.Logger.Debug("Saving data")
 	if cfg.Persistence == nil {
@@ -14,7 +28,7 @@ func SaveData(cfg *Config) error {
 	data := &Data{
 		CaughtPokemon:     cfg.CaughtPokemon,
 		PartyMembers:      cfg.Party.Members,
-		DiscoveredPokemon: cfg.DiscoveredPokemon,
+		DiscoveredPokemon: cfg.Discoveries.ToMap(), // Convert to map for storage
 	}
 
 	err := cfg.Persistence.Save(data)
