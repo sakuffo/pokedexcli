@@ -64,3 +64,22 @@ func (l *Logger) SetLevel(level LogLevel) {
 func (l *Logger) SetWriter(writer io.Writer) {
 	l.writer = writer
 }
+
+// ParseLogLevel converts a string representation of a log level to LogLevel type.
+// Returns an error if the provided string is not a valid log level.
+func ParseLogLevel(level string) (LogLevel, error) {
+	switch level {
+	case "NONE":
+		return NONE, nil
+	case "DEBUG":
+		return DEBUG, nil
+	case "INFO":
+		return INFO, nil
+	case "ERROR":
+		return ERROR, nil
+	case "FATAL":
+		return FATAL, nil
+	default:
+		return INFO, fmt.Errorf("invalid log level: %s", level)
+	}
+}

@@ -3,10 +3,10 @@ package commands
 import (
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokedata"
+	"github.com/sakuffo/pokedexcli/internal/config"
 )
 
-func CommandHelp(cfg *pokedata.Config, args ...string) error {
+func CommandHelp(cfg *config.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'help' command")
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")

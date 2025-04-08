@@ -10,6 +10,7 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/sakuffo/pokedexcli/internal/commands"
+	"github.com/sakuffo/pokedexcli/internal/config"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
@@ -21,7 +22,7 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func startRepl(cfg *pokedata.Config) {
+func startRepl(cfg *config.Config) {
 	cfg.Logger.Debug("Starting REPL")
 
 	sigChan := make(chan os.Signal, 1)

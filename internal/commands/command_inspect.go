@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokedata"
+	"github.com/sakuffo/pokedexcli/internal/config"
 )
 
-func CommandInspect(cfg *pokedata.Config, args ...string) error {
+func CommandInspect(cfg *config.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.Logger.Error("Inspect command called without a pokemon name")
 		return errors.New("inspect requires a pokemon name")
@@ -19,7 +19,7 @@ func CommandInspect(cfg *pokedata.Config, args ...string) error {
 	pokemon, exists := cfg.CaughtPokemon[pokemonName]
 	if !exists {
 		cfg.Logger.Error("Attempted to inspect uncaught Pokemon: %s", pokemonName)
-		return errors.New("You haven't caught this pokemon yet")
+		return errors.New("you haven't caught this pokemon yet")
 	}
 
 	cfg.Logger.Info("Displaying details for Pokemon: %s", pokemonName)

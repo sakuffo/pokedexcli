@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/sakuffo/pokedexcli/internal/pokedata"
+	"github.com/sakuffo/pokedexcli/internal/config"
 )
 
 const (
@@ -13,7 +13,7 @@ const (
 	colorReset = "\033[0m"
 )
 
-func CommandExplore(cfg *pokedata.Config, args ...string) error {
+func CommandExplore(cfg *config.Config, args ...string) error {
 
 	// Check if area is provided
 	if len(args) != 1 {

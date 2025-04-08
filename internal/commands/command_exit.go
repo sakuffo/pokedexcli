@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sakuffo/pokedexcli/internal/config"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func CommandExit(cfg *pokedata.Config, args ...string) error {
+func CommandExit(cfg *config.Config, args ...string) error {
 	cfg.Logger.Debug("Exiting Pokedex")
 	// Save data before exiting
 	err := pokedata.SaveData(cfg)

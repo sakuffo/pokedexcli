@@ -6,10 +6,12 @@ import (
 
 	"golang.org/x/exp/rand"
 
+	"github.com/sakuffo/pokedexcli/internal/config"
+	"github.com/sakuffo/pokedexcli/internal/party"
 	"github.com/sakuffo/pokedexcli/internal/pokedata"
 )
 
-func CommandCatch(cfg *pokedata.Config, args ...string) error {
+func CommandCatch(cfg *config.Config, args ...string) error {
 	if len(args) != 1 {
 		cfg.Logger.Error("Pokemon name is required")
 		return errors.New("pokemon name is required")
@@ -40,7 +42,9 @@ func CommandCatch(cfg *pokedata.Config, args ...string) error {
 
 	cfg.CaughtPokemon[pokemonResp.Name] = pokemonResp
 
-	err = cfg.Party.AddMember(pokemonResp)
+	err = cfg.Party.AddMember(&party.PartyPokemon{
+		BasePokemon: pokemonResp,
+	})
 	if err != nil {
 		cfg.Logger.Error("Failed to add %s to party: %v", pokemonName, err)
 		fmt.Printf("Failed to add %s to party: %v\n", pokemonName, err)

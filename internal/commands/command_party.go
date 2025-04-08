@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sakuffo/pokedexcli/internal/pokedata"
+	"github.com/sakuffo/pokedexcli/internal/config"
 )
 
-func CommandParty(cfg *pokedata.Config, args ...string) error {
+func CommandParty(cfg *config.Config, args ...string) error {
 	cfg.Logger.Debug("Executing 'party' command")
 	if len(args) == 0 {
 		return CommandPartyList(cfg, args...)
@@ -32,7 +32,7 @@ func CommandParty(cfg *pokedata.Config, args ...string) error {
 	}
 }
 
-func CommandPartyList(cfg *pokedata.Config, args ...string) error {
+func CommandPartyList(cfg *config.Config, args ...string) error {
 	members := cfg.Party.ListMembers()
 	if len(members) == 0 {
 		cfg.Logger.Info("No party members found")
@@ -48,15 +48,15 @@ func CommandPartyList(cfg *pokedata.Config, args ...string) error {
 	return nil
 }
 
-func CommandPartyInspect(cfg *pokedata.Config, nickname string) error {
+func CommandPartyInspect(cfg *config.Config, nickname string) error {
 	cfg.Logger.Debug("Inspecting party member: %s", nickname)
 	fmt.Printf("Inspecting party member: %s\n", nickname)
 	fmt.Println("--------------Inspecting------------------")
-	pokemon, err := cfg.Party.GetMember(nickname)
-	if err != nil {
+	pokemon, found := cfg.Party.GetMember(nickname)
+	if !found {
 		cfg.Logger.Error("Party member not found: %s", nickname)
-		fmt.Println("Party member not found: %s", nickname)
-		return err
+		fmt.Printf("Party member not found: %s\n", nickname)
+		return errors.New("party member not found")
 	}
 
 	cfg.Logger.Info("Displaying details for party member: %s", nickname)
@@ -83,16 +83,16 @@ func CommandPartyInspect(cfg *pokedata.Config, nickname string) error {
 	return nil
 }
 
-func CommandPartyRemove(cfg *pokedata.Config, nickname string) error {
+func CommandPartyRemove(cfg *config.Config, nickname string) error {
 	cfg.Logger.Debug("Removing party member: %s", nickname)
 	fmt.Printf("Removing party member: %s\n", nickname)
 	err := cfg.Party.RemoveMember(nickname)
 	if err != nil {
 		cfg.Logger.Error("Failed to remove party member: %s", nickname)
-		fmt.Println("Failed to remove party member: %s", nickname)
+		fmt.Printf("Failed to remove party member: %s\n", nickname)
 		return err
 	}
 	cfg.Logger.Info("Party member removed: %s", nickname)
-	fmt.Println("Party member removed: %s", nickname)
+	fmt.Printf("Party member removed: %s\n", nickname)
 	return nil
 }
