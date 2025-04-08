@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"testing"
 	"time"
+
+	"github.com/sakuffo/pokedexcli/internal/logger"
 )
 
 func TestAddGet(t *testing.T) {
 	const interval = 5 * time.Second
+	testLogger := logger.New(logger.NONE)
 	cases := []struct {
 		key string
 		val []byte
@@ -24,7 +27,7 @@ func TestAddGet(t *testing.T) {
 
 	for i, c := range cases {
 		t.Run(fmt.Sprintf("Test case %v", i), func(t *testing.T) {
-			cache := NewCache(interval, nil)
+			cache := NewCache(interval, testLogger)
 			cache.Add(c.key, c.val)
 			val, ok := cache.Get(c.key)
 			if !ok {
@@ -42,7 +45,8 @@ func TestAddGet(t *testing.T) {
 func TestReapLoop(t *testing.T) {
 	const baseTime = 5 * time.Millisecond
 	const waitTime = baseTime + 5*time.Millisecond
-	cache := NewCache(baseTime, nil)
+	testLogger := logger.New(logger.NONE)
+	cache := NewCache(baseTime, testLogger)
 	cache.Add("https://example.com", []byte("testdata"))
 
 	_, ok := cache.Get("https://example.com")

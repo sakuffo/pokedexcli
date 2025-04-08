@@ -1,5 +1,5 @@
 package pokeapi
 
-const (
+var (
 	baseURL = "https://pokeapi.co/api/v2"
 )
